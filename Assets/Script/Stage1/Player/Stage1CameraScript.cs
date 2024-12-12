@@ -3,8 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-//一人称カメラのシステム、マウスによってカメラを動かす
-public class Stage1CameraScript : MonoBehaviour
+//一人称カメラのシステム、マウスによってカメラを動かす、
+//Moveを継承して、カメラの動きに合わせて、計算を行う
+public class Stage1CameraScript : Move
 {
     /*
      * 動かしたいカメラを取得する
@@ -14,6 +15,8 @@ public class Stage1CameraScript : MonoBehaviour
      * マウスのXの回転累積を取得
      * マウスのYの回転累積を取得
      * 取得したX,Yの累積角度をカメラ入れる
+     * Moveを継承して、カメラに入れる
+     * 
      */
 
     public Camera playerCamera; //カメラ
@@ -30,9 +33,9 @@ public class Stage1CameraScript : MonoBehaviour
     
 
    
-    void Start()
+    protected override void Start()
     {
-        playerCamera = GetComponent<Camera>();
+        base.Start();
     }
 
     private void Update()
@@ -46,7 +49,6 @@ public class Stage1CameraScript : MonoBehaviour
         mouseX = Input.GetAxis("Mouse X");
         mouseY = Input.GetAxis("Mouse Y");
 
-        Debug.Log("Current X Angle: " + carrentXAngle);
 
         carrentXAngle += mouseY * mouseSpeed; //回転してた時のXの角度を保持
         carrentYAngle += mouseX * mouseSpeed; //回転してた時のYの角度を保持
