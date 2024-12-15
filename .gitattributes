@@ -1,1 +1,2 @@
-Assets/Font/rounded-mplus-2c-medium[[:space:]]SDF.asset filter=lfs diff=lfs merge=lfs -text
+assets/font/rounded-mplus-2c-medium-sdf.asset filter=lfs diff=lfs merge=lfs -text
+
