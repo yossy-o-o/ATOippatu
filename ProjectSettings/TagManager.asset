@@ -3,7 +3,10 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - Eff6AttackCollision
+  - Eff12AttackCollision
+  - Enemy1EffectCollision
   layers:
   - Default
   - TransparentFX

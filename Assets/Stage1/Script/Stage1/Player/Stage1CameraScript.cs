@@ -20,9 +20,9 @@ public class Stage1CameraScript : MonoBehaviour
 
     [SerializeField] GameObject player;
 
-    private UnityEngine.Vector3 playerPos;//プレイヤーの位置の変数
+    private Vector3 playerPosition;//現在地取得
 
-    private float speed = 100f; //カメラのスピードを取得
+    private float speed = 200f; //カメラのスピードを取得
 
     private float mouseInputX;
 
@@ -30,7 +30,7 @@ public class Stage1CameraScript : MonoBehaviour
 
     void Start()
     {
-        playerPos = player.transform.position;
+        playerPosition = player.transform.position; //playerの位置を取得
 
         // カメラの向きをプレイヤーの向きに合わせる
         transform.rotation = player.transform.rotation;
@@ -42,22 +42,16 @@ public class Stage1CameraScript : MonoBehaviour
     }
 
     private void CameraSystem()
-    {
-        //playerPos = player.transform.position;で取得した位置を
-        //transform.position += player.transform.position - playerPos;で引いて、その差分をplayerPos = player.transform.position;ここでまた取得している
-        //カメラ位置をプレイヤーの位置に合わせる
-        //カメラの移動 = 移動後座標-移動前座標　
-        transform.position += player.transform.position - playerPos;
-        //移動前座標 = 移動後座標
-        playerPos = player.transform.position;
+    {　
+        transform.position += player.transform.position - playerPosition;
+        playerPosition = player.transform.position;
 
-        //マウスのX軸とY軸の入力を取得
         mouseInputX = Input.GetAxis("Mouse X");
         mouseInputY = -Input.GetAxis("Mouse Y");
 
         //カメラを回転させる
-        transform.RotateAround(playerPos, UnityEngine.Vector3.up, mouseInputX * Time.deltaTime * speed);
-        transform.RotateAround(playerPos, transform.right, mouseInputY * Time.deltaTime * speed);
+        transform.RotateAround(playerPosition, Vector3.up, mouseInputX * Time.deltaTime * speed);
+        transform.RotateAround(playerPosition, transform.right, mouseInputY * Time.deltaTime * speed);
     }
 
 }
