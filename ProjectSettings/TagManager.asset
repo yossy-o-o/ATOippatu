@@ -7,6 +7,14 @@ TagManager:
   - Eff6AttackCollision
   - Eff12AttackCollision
   - Enemy1EffectCollision
+  - Stage
+  - Confiner
+  - Stage2Player
+  - Stage2Enemy
+  - GameOverZone
+  - Stage4Eff12EnemyCollider
+  - Stage4Eff5EnemyCollider
+  - Stage4Eff8EnemyCollider
   layers:
   - Default
   - TransparentFX
@@ -14,9 +22,9 @@ TagManager:
   - 
   - Water
   - UI
-  - 
-  - 
-  - 
+  - Camera
+  - Player
+  - Ground
   - 
   - 
   - 

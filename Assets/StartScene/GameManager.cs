@@ -56,6 +56,7 @@ public class GameManager : MonoBehaviour
         {
             Debug.Log("成功パネルを表示");
             succesPanel.SetActive(true);//成功パネルを表示.
+            StartCoroutine(LoadNextGameWithDelay());
         }
         else
         {
@@ -112,3 +113,4 @@ public class GameManager : MonoBehaviour
 
 
 }
+

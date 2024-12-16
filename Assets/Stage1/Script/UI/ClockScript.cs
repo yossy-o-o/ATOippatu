@@ -1,45 +1,54 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
-using System.Xml.Serialization;
 
-// タイマー、成功処理
 public class ClockScript : MonoBehaviour
 {
     public TextMeshProUGUI clockText;
-
-    DamageJudgment damageJudgment;
-
+    [SerializeField] List<GameObject> enemy;
     public float clockTime = 5;
+
+    private bool isSuccess = false; // 成功処理のフラグ
+
     void Start()
     {
         clockText = GetComponent<TextMeshProUGUI>();
     }
 
-    
     void Update()
     {
         ClockSysytem();
     }
 
-    //タイマーの処理
+    // タイマーの処理
     public void ClockSysytem()
     {
+        if (isSuccess) return; // 成功状態なら処理をスキップ
+
         clockTime -= Time.deltaTime;
 
-        if(clockTime < 0)
+        if (clockTime <= 0)
         {
             clockTime = 0;
 
-            GameManager.instance.HandleMiniGameResult(true); //成功を処理
+            isSuccess = true; // 成功状態をセット
 
-            damageJudgment.DisableEnemy(); //敵を削除
+            GameManager.instance.HandleMiniGameResult(true); // 成功を通知
 
+            FalseEnemy(); // 敵を無効化
         }
 
         clockText.text = clockTime.ToString("F1");
     }
 
-
+    private void FalseEnemy()
+    {
+        foreach (GameObject enemy in enemy)
+        {
+            if (enemy != null)
+            {
+                enemy.SetActive(false);
+            }
+        }
+    }
 }
