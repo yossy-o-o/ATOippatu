@@ -8,3 +8,5 @@
 	url = https://github.com/yossy-o-o/ATOippatu.git
 	fetch = +refs/*:refs/*
 	mirror = true
+[lfs]
+	repositoryformatversion = 0
