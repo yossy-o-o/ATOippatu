@@ -38,6 +38,12 @@ public class DamageJuge : MonoBehaviour
             EnemySetFalse();
             GameManager.instance.HandleMiniGameResult(false);
         }
+
+        if(other.gameObject.CompareTag("GameOverZone"))
+        {
+            EnemySetFalse();
+            GameManager.instance.HandleMiniGameResult(false);
+        }
     }
 
     private void EnemySetFalse()

@@ -5,40 +5,46 @@ using UnityEngine;
 //練習としてEnemy1のEffect当たり判定の処理
 public class Enemy1EffectCollision : MonoBehaviour
 {
-    Rigidbody rb;
+    [SerializeField] Transform startPoint;
 
-    [SerializeField] Transform startPosition;
+    [SerializeField] Transform endPoint;
 
-    [SerializeField] Transform endPosition;
+    [SerializeField] float delayTime = 2.0f;
 
-    [SerializeField] float delayTime;
-
-    [SerializeField] float effectLifeTime;
+    [SerializeField] float effectLifeTime = 1.0f;
 
     private float timer = 0.0f;
 
+    Rigidbody rb;
     void Start()
     {
         rb = GetComponent<Rigidbody>();
 
-        StartCoroutine(EffectSystem());
+        StartCoroutine(effectMove());
     }
 
-    private IEnumerator EffectSystem()
+    private IEnumerator effectMove()
     {
         yield return new WaitForSeconds(delayTime);
 
-        while(timer < effectLifeTime)
+        while (true)
         {
-            float elapsedTime = Mathf.Clamp01(timer / effectLifeTime);
+            timer = 0.0f; //タイマーリセット
 
-            Vector3 effectMove = Vector3.Lerp(startPosition.position, endPosition.position, elapsedTime);
+            while (timer < effectLifeTime)
+            {
+                float elapsedTime = Mathf.Clamp01(timer / effectLifeTime);
 
-            transform.position = effectMove;
+                Vector3 moving = Vector3.Lerp(startPoint.position, endPoint.position, elapsedTime);
 
-            timer += Time.deltaTime;
+                transform.position = moving;
+
+                timer += Time.deltaTime;
+
+                yield return null;
+            }
+
+            yield return new WaitForSeconds(delayTime);
         }
-
-        Destroy(gameObject);
     }
 }

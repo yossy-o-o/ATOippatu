@@ -10,16 +10,18 @@ public class DamageJudgment : MonoBehaviour
 
     //UŒ‚‚ª“–‚½‚Á‚½‚çAGameOverPanel‚ğ•\¦‚·‚é
     //¸”sˆ—
-    private void OnCollisionEnter(Collision other)
+    private void OnTriggerEnter(Collider other)
     {
         if(other.gameObject.CompareTag("Eff6AttackCollision"))
         {
+            Debug.Log("“–‚½‚Á‚½I");
             GameManager.instance.HandleMiniGameResult(false);// ¸”s‚ğ’Ê’m
             DisableEnemy();
         }
 
         if(other.gameObject.CompareTag("Eff12AttackCollision"))
         {
+            Debug.Log("“–‚½‚Á‚½I");
             GameManager.instance.HandleMiniGameResult(false);// ¸”s‚ğ’Ê’m
             DisableEnemy();
 
@@ -27,6 +29,7 @@ public class DamageJudgment : MonoBehaviour
 
         if(other.gameObject.CompareTag("Enemy1EffectCollision"))
         {
+            Debug.Log("“–‚½‚Á‚½I");
             GameManager.instance.HandleMiniGameResult(false);// ¸”s‚ğ’Ê’m
             DisableEnemy();
         }

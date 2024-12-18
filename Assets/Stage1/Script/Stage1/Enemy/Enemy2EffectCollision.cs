@@ -4,7 +4,7 @@ using UnityEngine;
 
 //EffectにCollisionを持たせる
 public class Enemy2EffectCollision : MonoBehaviour
-{ 
+{
     /*やること.
      * スタート位置と終了位置の場所を取得
      * タイマー、clamp使用して、進行度を取得する
@@ -15,44 +15,47 @@ public class Enemy2EffectCollision : MonoBehaviour
      */
 
 
-    [SerializeField] float effectLifeTime = 4.0f; //当たり判定の消滅時間.
+    [SerializeField] Transform startPoint;
 
-    [SerializeField] Transform Effect6StartPointCollition; //当たり判定のスタート位置.
+    [SerializeField] Transform endPoint;
 
-    [SerializeField] Transform Effect6EndPointCollition; //当たり判定の終了位置.
+    [SerializeField] float delayTime = 2.0f;
 
-    private float timer = 0.0f; //エフェクトの経過時間.
+    [SerializeField] float effectLifeTime = 1.0f;
+
+    private float timer = 0.0f;
 
     Rigidbody rb;
-
-    private float delayTime = 1.5f;
-
     void Start()
     {
         rb = GetComponent<Rigidbody>();
 
-        StartCoroutine(EffectMove());
+        StartCoroutine(effectMove());
     }
 
-    private IEnumerator EffectMove()
+    private IEnumerator effectMove()
     {
         yield return new WaitForSeconds(delayTime);
 
-        //エフェクトの経過時間が、effectLifeTimeより小さかったら、繰り返す.
-        while (timer < effectLifeTime)
+        while (true)
         {
-            float t = Mathf.Clamp01(timer / effectLifeTime); //エフェクトの進行度を求める
+            timer = 0.0f; //タイマーリセット
 
-            Vector3 effectMoving = Vector3.Lerp(Effect6StartPointCollition.position, Effect6EndPointCollition.position, t);
-            
-            transform.position = effectMoving;
+            while (timer < effectLifeTime)
+            {
+                float elapsedTime = Mathf.Clamp01(timer / effectLifeTime);
 
-            timer += Time.deltaTime; // タイマーを更新することによって、whileを抜ける
+                Vector3 moving = Vector3.Lerp(startPoint.position, endPoint.position, elapsedTime);
 
-            yield return null; // 1フレーム待機.
+                transform.position = moving;
+
+                timer += Time.deltaTime;
+
+                yield return null;
+            }
+
+            yield return new WaitForSeconds(delayTime);
         }
-
-        Destroy(gameObject); // 効果のライフタイムが終了したらオブジェクトを破棄.
-
     }
+
 }

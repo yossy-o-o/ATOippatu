@@ -2,16 +2,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-//Stage4のPlayerの動く処理
 public class RigidBodyVelocity : MonoBehaviour
 {
-    public float playerSpeed = 3f; //プレイヤーのスピード
-    public float rotationSpeed = 5f; // 回転速度を調整する変数
-    Rigidbody rb;
-    public Transform cameraTransform; // カメラのTransformをInspectorで割り当て
+    public float playerSpeed = 3f; // プレイヤーの移動速度
+    public float rotationSpeed = 5f; // プレイヤーの回転速度
 
-    float moveX;
-    float moveZ;
+    private Rigidbody rb;
+
+    private float moveX;
+    private float moveZ;
 
     void Start()
     {
@@ -20,57 +19,42 @@ public class RigidBodyVelocity : MonoBehaviour
 
     void Update()
     {
-        Move();
+        GetInput(); // 入力を取得
     }
 
     private void FixedUpdate()
     {
-        CameraSystem();
+        MovePlayer(); // プレイヤーを移動
     }
 
-    private void CameraSystem()
+    private void GetInput()
     {
-        // カメラの方向を基準に移動方向を計算
-        Vector3 forward = cameraTransform.forward;
-        Vector3 right = cameraTransform.right;
+        // 入力取得（W/A/S/D または矢印キー）
+        moveX = Input.GetAxis("Horizontal"); // 横方向の入力（A/D）
+        moveZ = Input.GetAxis("Vertical");   // 縦方向の入力（W/S）
+    }
 
-        // Y方向（上下方向）は無視
-        forward.y = 0;
-        right.y = 0;
+    private void MovePlayer()
+    {
+        // 入力に基づいた移動方向を計算
+        Vector3 moveDirection = new Vector3(moveX, 0, moveZ);
 
-        // 正規化して斜め移動時の速度を一定に保つ
-        forward.Normalize();
-        right.Normalize();
+        // Rigidbodyの速度を設定（速度を正規化して一定の移動速度を保つ）
+        rb.velocity = moveDirection.normalized * playerSpeed + new Vector3(0, rb.velocity.y, 0);
 
-        // 入力に応じた移動方向
-        Vector3 moveDirection = forward * moveZ + right * moveX;
-
-        // Rigidbodyの速度を設定
-        rb.velocity = new Vector3(moveDirection.x, rb.velocity.y, moveDirection.z);
-
-        // 移動方向がある場合だけ回転する
-        if (moveDirection != Vector3.zero)
+        // 入力がある場合にのみ回転
+        if (moveDirection.sqrMagnitude > 0.01f)
         {
-            RotateCharacter(moveDirection);
+            RotatePlayer(moveDirection);
         }
     }
 
-    private void Move()
+    private void RotatePlayer(Vector3 moveDirection)
     {
-        // 入力取得
-        moveX = Input.GetAxis("Horizontal") * playerSpeed; // D / A キー
-        moveZ = Input.GetAxis("Vertical") * playerSpeed;   // W / S キー
-    }
-
-    private void RotateCharacter(Vector3 moveDirection)
-    {
-        // 現在の回転
-        Quaternion currentRotation = transform.rotation;
-
-        // 移動方向に基づく目標の回転
+        // プレイヤーが向くべき方向を計算
         Quaternion targetRotation = Quaternion.LookRotation(moveDirection);
 
-        // 現在の回転から目標の回転へ補間
-        transform.rotation = Quaternion.Lerp(currentRotation, targetRotation, rotationSpeed * Time.deltaTime);
+        // スムーズに回転する
+        transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
     }
 }

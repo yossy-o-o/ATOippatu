@@ -1,43 +1,42 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Xml.Serialization;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using TMPro;
+using DG.Tweening;
+using UnityEditor.SearchService;
 
-//ミニゲーム成功、失敗処理を管理するスクリプト.
+//成功、失敗を判定し、パネル管理や、体力管理などゲーム全般の処理
 public class GameManager : MonoBehaviour
 {
-    /*やること
-     * 
-     * 全部のミニゲームに共通するので、シングルトン化
-     * それぞれのシーンを取得する
-     * ライフ(残機)の個数
-     * 一定時間生き残ったらで成功失敗判定を行っていて、一元管理できるのでタイマーを実装
-     * 結果をパネルを表示、成功したら次のステージ、失敗したらライフを減らして次のステージをロード
-     * それぞれのシーンで、成功失敗のフラグを取得して、GameMangerに通知
-     * 一定回数繰り返して生き残っていたらクリア、失敗
-     * 時間があったらエンドレス実装
-     * 
-     */
+    public static GameManager instance; // シングルトン化
 
-    public static GameManager instance; //シングルトン化.
+    private int playerLife = 5; // プレイヤーのライフ
 
-    private int playerLife = 5; //プレイヤのライフ.
+    private int successCount = 0; // 成功したゲームの数
 
-    [SerializeField] List<Image> images = new List<Image>();//リストでimageを取得.
+    [SerializeField] List<Image> images = new List<Image>(); // ライフのUI
 
-    [SerializeField] GameObject succesPanel; //成功パネル.
+    [SerializeField] GameObject successPanel; // 成功パネル
 
-    [SerializeField] GameObject failPanel; //失敗パネル.
+    [SerializeField] GameObject failPanel; // 失敗パネル
 
-    [SerializeField] float PanelDelayTime = 3f;
+    [SerializeField] GameObject resultPanel; // 結果パネル
 
+    [SerializeField] float panelDelayTime = 2f; // パネルの遅延表示時間
+
+    [SerializeField] TextMeshProUGUI successCountText; // 成功数を表示するテキスト
+
+    [SerializeField] TextMeshProUGUI highStageText; // 最高記録を表示するテキスト
+
+    private const string HighStageRecordKey = "HighStage"; // PlayerPrefs 用のキー
+
+    private bool isGameOver = false; //ライフがなくなって、ゲームオーバーの判断
 
     void Awake()
     {
-        //インスタンス化
-        if(instance == null)
+        if (instance == null)
         {
             instance = this;
             DontDestroyOnLoad(gameObject);
@@ -48,69 +47,163 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    //ライフが全部なくなり、GameOverの処理を行う.
+    private void Start()
+    {
+        int currentStage = SceneManager.GetActiveScene().buildIndex; // 現在のシーンをステージ番号として記録
+
+        UpdateHighScore(currentStage); // 最高記録を更新
+    }
+
+    // ライフがなくなった場合の処理
     public void HandleMiniGameResult(bool success)
     {
-
         if (success)
         {
-            Debug.Log("成功パネルを表示");
-            succesPanel.SetActive(true);//成功パネルを表示.
-            StartCoroutine(LoadNextGameWithDelay());
+            successCount++;
+
+            ShowSuccessPanelWithSlideIn(); //成功パネルをアニメーションで表示
+
+            if(isGameOver == false)
+            {
+                StartCoroutine(LoadNextGameWithDelay());
+            }
         }
         else
         {
-            Debug.Log("失敗パネルを表示");
-            failPanel.SetActive(true); //失敗パネルを表示.
 
-            playerLife--; //ライフを減らす.
+            ShowFailPanelWithSlideIn(); //失敗パネルを表示
 
-            //ライフのimageを更新.
-            if(playerLife < images.Count)
+            playerLife--; // ライフを減らす
+
+            // ライフの画像を更新
+            if (playerLife >= 0 && playerLife < images.Count)
             {
-                images[playerLife].enabled = false;//playerLife番目の画像をfalse.
+                images[playerLife].enabled = false;
             }
 
-            //ゲームオーバー判定.
+            // ゲームオーバー判定
             if (playerLife <= 0)
             {
-                SceneManager.LoadScene("GameOverScene");
+                isGameOver = true;
+                ShowResult();
                 return;
             }
 
-            StartCoroutine(LoadNextGameWithDelay());
+            if(isGameOver == true)
+            {
+               StartCoroutine(LoadNextGameWithDelay());
+            }
         }
     }
 
-    //次のゲームに進む処理.
-    private void LoadNextGame()
-    {
-        int currentIndex = SceneManager.GetActiveScene().buildIndex; 
-        SceneManager.LoadScene(currentIndex + 1);
-    }
-
-    // 次のミニゲームをロードする前に、遅延を掛ける.
+    // 次のゲームをロードする処理
     private IEnumerator LoadNextGameWithDelay()
     {
-        yield return new WaitForSeconds(PanelDelayTime); // 遅延時間.
+        yield return new WaitForSeconds(panelDelayTime);
 
-        succesPanel.SetActive(false); 
+        successPanel.SetActive(false);
 
         failPanel.SetActive(false);
 
-        LoadNextGame(); 
-
-        StartNextGame();
+        LoadNextGame();
     }
 
-    //パネル状態をリセット.
-    void StartNextGame()
+    //シーンの管理と、エンドレスにするための処理
+    private void LoadNextGame()
     {
-        succesPanel.SetActive(false);
+        int currentIndex = SceneManager.GetActiveScene().buildIndex;
+
+        int nextIndex = currentIndex + 1;
+
+        // シーンの総数を取得
+        int totalScenes = SceneManager.sceneCountInBuildSettings;
+
+        // 最後のシーンを超えたら最初のシーンに戻る
+        if (nextIndex >= totalScenes)
+        {
+            nextIndex = 1; // 最初のシーンに戻る
+        }
+
+        SceneManager.LoadScene(nextIndex);
+    }
+
+    // ゲームオーバー後の結果を表示
+    private void ShowResult()
+    {
+        resultPanel.SetActive(true);
+
+        successCountText.text = successCount.ToString(); // 成功数を表示
+
+        highStageText.text = HighStageRecord().ToString(); // 最高到達ステージを表示
+    }
+
+    // 最高記録を更新する
+    private void UpdateHighScore(int currentStage)
+    {
+        int highStage = PlayerPrefs.GetInt(HighStageRecordKey, 0);
+
+        if (currentStage > highStage)
+        {
+            PlayerPrefs.SetInt(HighStageRecordKey, currentStage);
+            PlayerPrefs.Save();
+        }
+    }
+
+    // 最高記録を取得
+    public int HighStageRecord()
+    {
+        return PlayerPrefs.GetInt(HighStageRecordKey, 0);
+    }
+
+
+    //Dotweenを使用して、SuccessPanelにアニメーションを入れる
+    private void ShowSuccessPanelWithSlideIn()
+    {
+        RectTransform rectTransform = successPanel.GetComponent<RectTransform>();
+
+        rectTransform.anchoredPosition = new Vector2(0 , Screen.height); //画面外に移動
+
+        successPanel.SetActive(true);
+
+        rectTransform.DOAnchorPos(Vector2.zero , 0.5f); //0.5秒で画面中央に移動
+    }
+
+    //failPanelにアニメーションを入れる
+    private void ShowFailPanelWithSlideIn()
+    {
+        RectTransform rectTransform = failPanel.GetComponent<RectTransform>();
+
+        rectTransform.anchoredPosition = new Vector2(0 , Screen.height); //画面外に移動
+
+        failPanel.SetActive(true);
+
+        rectTransform.DOAnchorPos(Vector2.zero, 0.5f); //0.5秒で画面中央に移動
+    }
+
+    //リスタート処理
+    public void RestartGame()
+    {
+        isGameOver = false; //GameOver状態をfalseに
+
+        playerLife = 5; //プレイヤーライフをリセット
+
+        successCount = 0; //成功数をリセット
+
+        //ライフの画像をリセット
+        foreach (var image in images)
+        {
+            image.enabled = true;
+        }
+
+
+        //全パネルをfalse
+        successPanel.SetActive(false);
         failPanel.SetActive(false);
+        resultPanel.SetActive(false);
+
+        SceneManager.LoadScene(1);
     }
 
 
 
 }
-

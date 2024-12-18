@@ -9,44 +9,47 @@ using UnityEngine.UIElements;
 //effectの当たり判定(練習としてもう一度書く)
 public class Enemy3EffectCollision : MonoBehaviour
 {
-    Rigidbody rb;
+    [SerializeField] Transform startPoint;
 
-    [SerializeField] Transform startPosition;
-    [SerializeField] Transform endPosition;
+    [SerializeField] Transform endPoint;
+
+    [SerializeField] float delayTime = 2.0f;
 
     [SerializeField] float effectLifeTime = 1.0f;
 
     private float timer = 0.0f;
 
-    [SerializeField] float delayTime = 0.0f;
-
+    Rigidbody rb;
     void Start()
     {
         rb = GetComponent<Rigidbody>();
 
-        StartCoroutine(EffectSystem());
+        StartCoroutine(effectMove());
     }
 
-    private IEnumerator EffectSystem()
+    private IEnumerator effectMove()
     {
         yield return new WaitForSeconds(delayTime);
 
-        //繰り返し
-        while(timer < effectLifeTime)
+        while (true)
         {
-            float elapsedTime = Mathf.Clamp01(timer / effectLifeTime);
+            timer = 0.0f; //タイマーリセット
 
-            Vector3 effectMove = Vector3.Lerp(startPosition.position, endPosition.position, elapsedTime);
+            while (timer < effectLifeTime)
+            {
+                float elapsedTime = Mathf.Clamp01(timer / effectLifeTime);
 
-            transform.position = effectMove;
+                Vector3 moving = Vector3.Lerp(startPoint.position, endPoint.position, elapsedTime);
 
-            timer += Time.deltaTime;
+                transform.position = moving;
 
-            yield return null;
+                timer += Time.deltaTime;
+
+                yield return null;
+            }
+
+            yield return new WaitForSeconds(delayTime);
         }
-
-        Destroy(gameObject);
-
     }
 
 

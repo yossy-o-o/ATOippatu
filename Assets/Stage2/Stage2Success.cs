@@ -11,7 +11,7 @@ public class Stage2Success : MonoBehaviour
 
     [SerializeField] private float limitTime = 20.0f;
 
-    [SerializeField] GameObject enemy;
+    [SerializeField] List<GameObject> enemy = new List<GameObject>();
 
     private bool isSuccess = false;
     void Start()
@@ -35,7 +35,7 @@ public class Stage2Success : MonoBehaviour
             limitTime = 0;
             isSuccess = true;
 
-            Destroy(enemy);
+            PlayerDestroy();
             //Debug.Log("ê¨å˜");
             GameManager.instance.HandleMiniGameResult(true);
 
@@ -44,6 +44,12 @@ public class Stage2Success : MonoBehaviour
         clockText.text = limitTime.ToString("F1");
     }
 
-    
+    private void PlayerDestroy()
+    {
+        foreach(GameObject Enemys in enemy)
+        {
+            Destroy(Enemys);
+        }
+    }
 
 }

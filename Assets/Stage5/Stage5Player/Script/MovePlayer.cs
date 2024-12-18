@@ -9,7 +9,7 @@ public class MovePlayer : MonoBehaviour
 
     private float moveX;
 
-    private float jumpForce = 4.0f;
+    [SerializeField] float jumpForce = 4.0f;
 
     private bool isRunning;
 
@@ -18,6 +18,14 @@ public class MovePlayer : MonoBehaviour
     Animator animator;
 
     SpriteRenderer spriteRenderer;
+
+    [SerializeField] Transform groundCheck;
+
+    [SerializeField] float groundCheckRadius = 0.1f;
+
+    [SerializeField] LayerMask groundLayer;
+
+    bool isGrounded;
     void Start()
     {
         rb2D = GetComponent<Rigidbody2D>();
@@ -28,6 +36,12 @@ public class MovePlayer : MonoBehaviour
     void Update()
     {
         Move();
+        Jump();
+    }
+
+    private void FixedUpdate()
+    {
+        CheckGround();
     }
 
     private void Move()
@@ -48,8 +62,41 @@ public class MovePlayer : MonoBehaviour
             animator.SetBool("RunTrigger", false);
         }
 
+        PlayerChangeFlip();
+
     }
 
+    private void PlayerChangeFlip()
+    {
+        if(moveX > 0)
+        {
+            spriteRenderer.flipX = false;
+        }
+        else if(moveX < 0)
+        {
+            spriteRenderer.flipX = true;
+        }
+    }
 
+    private void Jump()
+    {
+        if(Input.GetKeyDown(KeyCode.Space) && isGrounded)
+        {
+            rb2D.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
+            isGrounded = false;
+        }
+    }
+
+    private void CheckGround()
+    {
+        isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayer);
+    }
+
+    private void OnDrawGizmos()
+    {
+        // デバッグ用に接地判定の範囲を表示
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(groundCheck.position, groundCheckRadius);
+    }
 
 }
