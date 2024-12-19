@@ -7,9 +7,18 @@ public class MenuPanelRestartScript : MonoBehaviour
 {
     [SerializeField] GameObject settingPanel;
 
+    [SerializeField] AudioSource restatAudio;
+
+    private void Start()
+    {
+        
+    }
+
     private float DelayTime = 1.0f;
     public void OnClickMenuPanelRestartButton()
     {
+        restatAudio.Play();
+
         StartCoroutine(DelayLoad());
 
         settingPanel.SetActive(false);

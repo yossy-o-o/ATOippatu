@@ -7,8 +7,17 @@ using UnityEngine.SceneManagement;
 public class MenuPanelRetrunSctipt : MonoBehaviour
 {
     [SerializeField] GameObject settingPanel;
+
+    [SerializeField] AudioSource retrunAudio;
+
+    private void Start()
+    {
+        
+    }
     public void OnclickRetrunButton()
     {
+        retrunAudio.Play();
+
         settingPanel.SetActive(false);
 
         SceneManager.LoadScene("StartScene");
