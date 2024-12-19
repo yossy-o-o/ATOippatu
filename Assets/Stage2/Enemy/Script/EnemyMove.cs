@@ -33,11 +33,11 @@ public class EnemyMove : MonoBehaviour
 
     [SerializeField] float attackRange = 1.0f; //攻撃距離
 
-    [SerializeField] float delayTime = 1.0f;
+    [SerializeField] float footStepTime = 0.1f;
 
+    private bool isFootStep = false;
 
-
-
+    AudioSource audio;
 
 
     //ステートの種類
@@ -52,13 +52,18 @@ public class EnemyMove : MonoBehaviour
     private void Start()
     {
         animator = GetComponent<Animator>();
+
         rb2D = GetComponent<Rigidbody2D>();
+
         spriteRenderer = GetComponent<SpriteRenderer>();
+
+        audio = GetComponent<AudioSource>();
     }
 
     private void Update()
     {
         EnemySwitch();
+
         StateAisSystem();
     }
 
@@ -106,6 +111,10 @@ public class EnemyMove : MonoBehaviour
     //走る処理
     void Run()
     {
+        if(!isFootStep)
+        {
+            StartCoroutine(footStepSE());
+        }
 
         Vector2 direction = (target.position - transform.position).normalized;
 
@@ -125,6 +134,7 @@ public class EnemyMove : MonoBehaviour
     //攻撃処理
     void Attack()
     {
+
         animator.SetTrigger("Attack");
 
         rb2D.velocity = Vector2.zero;
@@ -149,5 +159,17 @@ public class EnemyMove : MonoBehaviour
             case EnemyState.Run:
                 break;
         }
+    }
+
+
+    private IEnumerator footStepSE()
+    {
+        isFootStep = true;
+
+        audio.Play();
+
+        yield return new WaitForSeconds(footStepTime);
+
+        isFootStep = false;
     }
 }

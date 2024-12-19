@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class RigidBodyVelocity : MonoBehaviour
+public class Stage4PlayerMove: MonoBehaviour
 {
     public float playerSpeed = 3f; // プレイヤーの移動速度
     public float rotationSpeed = 5f; // プレイヤーの回転速度
@@ -12,9 +12,16 @@ public class RigidBodyVelocity : MonoBehaviour
     private float moveX;
     private float moveZ;
 
+    private bool isFootStep = false;
+
+    private float footStepSoundTime = 0.7f; 
+
+    AudioSource audio;
+
     void Start()
     {
         rb = GetComponent<Rigidbody>();
+        audio = GetComponent<AudioSource>();
     }
 
     void Update()
@@ -36,6 +43,8 @@ public class RigidBodyVelocity : MonoBehaviour
 
     private void MovePlayer()
     {
+        
+        
         // 入力に基づいた移動方向を計算
         Vector3 moveDirection = new Vector3(moveX, 0, moveZ);
 
@@ -45,7 +54,13 @@ public class RigidBodyVelocity : MonoBehaviour
         // 入力がある場合にのみ回転
         if (moveDirection.sqrMagnitude > 0.01f)
         {
+
             RotatePlayer(moveDirection);
+        }
+
+        if (moveDirection.sqrMagnitude > 0.01f && !isFootStep)
+        {
+            StartCoroutine(PlayFootStepSound());
         }
     }
 
@@ -56,5 +71,19 @@ public class RigidBodyVelocity : MonoBehaviour
 
         // スムーズに回転する
         transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
+    }
+
+    private IEnumerator PlayFootStepSound()
+    {
+        if (!isFootStep)
+        {
+            isFootStep = true;
+
+            audio.Play();
+
+            yield return new WaitForSeconds(footStepSoundTime);
+
+            isFootStep = false;
+        }
     }
 }

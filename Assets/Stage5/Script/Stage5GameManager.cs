@@ -12,6 +12,10 @@ public class Stage5GameManager : MonoBehaviour
 
     [SerializeField] BulletScript bulletScript;
 
+    [SerializeField] GameObject bullet;
+
+    [SerializeField] GameObject bullet2;
+
     bool isSuccess = false;
 
     void Update()
@@ -28,6 +32,12 @@ public class Stage5GameManager : MonoBehaviour
 
         if(timer <= 0)
         {
+            Destroy(gameObject);
+
+            Destroy(bullet);
+
+            Destroy(bullet2);
+
             timer = 0;
 
             isSuccess = true;

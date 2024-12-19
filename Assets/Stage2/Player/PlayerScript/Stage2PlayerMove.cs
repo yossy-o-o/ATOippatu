@@ -27,6 +27,8 @@ public class Stage2PlayerMove : MonoBehaviour
 
     private float moveX; //Horizontal
 
+    AudioSource audio;
+
 
 
     // Start is called before the first frame update
@@ -35,6 +37,7 @@ public class Stage2PlayerMove : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         animatior = GetComponent<Animator>();
         spriteRenderer = GetComponent<SpriteRenderer>();
+        audio = GetComponent<AudioSource>();
 
     }
 
@@ -68,11 +71,13 @@ public class Stage2PlayerMove : MonoBehaviour
         ChangeDirectionAnim(); //プレイヤーの向き
     }
 
+    //プレイヤーのジャンプ機能
     private void Jump()
     {
         if(Input.GetKeyDown(KeyCode.Space) && isGrounded)
         {
             rb.AddForce(Vector2.up * jumpPower , ForceMode2D.Impulse);
+            audio.Play();
             isGrounded = false;
         }
     }

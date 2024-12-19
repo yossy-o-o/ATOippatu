@@ -19,18 +19,30 @@ public class MovePlayer : MonoBehaviour
 
     SpriteRenderer spriteRenderer;
 
+    AudioSource audio;
+
     [SerializeField] Transform groundCheck;
 
     [SerializeField] float groundCheckRadius = 0.1f;
 
     [SerializeField] LayerMask groundLayer;
 
-    bool isGrounded;
+    private bool isGrounded;
+
+    private bool isFootStep = false;
+
+    private bool isCheckSoundJump = false;
+
+    private float footStepTime = 0.3f;
+
+    [SerializeField] AudioSource jumpAudio;
+
     void Start()
     {
         rb2D = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
         spriteRenderer = GetComponent<SpriteRenderer>();
+        audio = GetComponent<AudioSource>();
     }
 
     void Update()
@@ -51,6 +63,11 @@ public class MovePlayer : MonoBehaviour
         Vector2 moving = new Vector2(moveX * playerSpeed, rb2D.velocity.y);
 
         rb2D.velocity = moving;
+
+        if(!isFootStep && moving.magnitude > 0.01f)
+        {
+            StartCoroutine(PlayFootStepSound());
+        }
 
         //アニメーションを制御
         if (moving != Vector2.zero)
@@ -82,6 +99,11 @@ public class MovePlayer : MonoBehaviour
     {
         if(Input.GetKeyDown(KeyCode.Space) && isGrounded)
         {
+            if(!isCheckSoundJump)
+            {
+                StartCoroutine(PlayJumpSound());
+            }
+
             rb2D.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
             isGrounded = false;
         }
@@ -97,6 +119,37 @@ public class MovePlayer : MonoBehaviour
         // デバッグ用に接地判定の範囲を表示
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(groundCheck.position, groundCheckRadius);
+    }
+
+    //足音
+    private IEnumerator PlayFootStepSound()
+    {
+        if(!isFootStep)
+        {
+            isFootStep = true;
+
+            audio.Play();
+
+            yield return new WaitForSeconds(footStepTime);
+
+            isFootStep = false;
+        }
+
+    }
+
+    private IEnumerator PlayJumpSound()
+    {
+        if (!isCheckSoundJump)
+        {
+            isCheckSoundJump = true;
+
+            jumpAudio.Play();
+
+            yield return new WaitForSeconds(footStepTime);
+
+            isCheckSoundJump = false;
+        }
+
     }
 
 }
