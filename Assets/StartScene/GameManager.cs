@@ -5,7 +5,6 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using TMPro;
 using DG.Tweening;
-using UnityEditor.SearchService;
 
 //成功、失敗を判定し、パネル管理や、体力管理などゲーム全般の処理
 public class GameManager : MonoBehaviour
@@ -30,7 +29,7 @@ public class GameManager : MonoBehaviour
 
     [SerializeField] TextMeshProUGUI highStageText; // 最高記録を表示するテキスト
 
-    private const string HighStageRecordKey = "HighStage"; // PlayerPrefs 用のキー
+    private const string HighStageRecordKey = "HighStageRecord"; // PlayerPrefs 用のキー
 
     private bool isGameOver = false; //ライフがなくなって、ゲームオーバーの判断
 
@@ -52,6 +51,10 @@ public class GameManager : MonoBehaviour
         int currentStage = SceneManager.GetActiveScene().buildIndex; // 現在のシーンをステージ番号として記録
 
         UpdateHighScore(currentStage); // 最高記録を更新
+
+        int highStage = PlayerPrefs.GetInt(HighStageRecordKey, 0);
+
+        Debug.Log($"Current High Stage Record: {highStage}");
     }
 
     // ライフがなくなった場合の処理
@@ -130,6 +133,9 @@ public class GameManager : MonoBehaviour
     // ゲームオーバー後の結果を表示
     private void ShowResult()
     {
+
+        Debug.Log($"ShowResult called: successCount = {successCount}, HighStageRecord = {HighStageRecord()}");
+
         resultPanel.SetActive(true);
 
         successCountText.text = successCount.ToString(); // 成功数を表示
@@ -145,6 +151,7 @@ public class GameManager : MonoBehaviour
         if (currentStage > highStage)
         {
             PlayerPrefs.SetInt(HighStageRecordKey, currentStage);
+
             PlayerPrefs.Save();
         }
     }

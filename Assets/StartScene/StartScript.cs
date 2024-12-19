@@ -22,7 +22,7 @@ public class StartScript : MonoBehaviour
         if(Input.GetKeyDown(KeyCode.Return))
         {
             startPanel.SetActive(false);
-            SceneManager.LoadScene("Stage1Scene");
+            SceneManager.LoadScene("Stage2Scene");
         }
     }
 }
