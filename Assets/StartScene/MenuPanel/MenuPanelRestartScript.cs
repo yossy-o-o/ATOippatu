@@ -17,11 +17,14 @@ public class MenuPanelRestartScript : MonoBehaviour
     private float DelayTime = 1.0f;
     public void OnClickMenuPanelRestartButton()
     {
+
         restatAudio.Play();
 
         StartCoroutine(DelayLoad());
 
         settingPanel.SetActive(false);
+
+
 
         GameManager.instance.RestartGame();
     }

@@ -2160,7 +2160,7 @@ MonoBehaviour:
   - {fileID: 1857737768720152466, guid: c8fa7501058ce74478c9f82c3a505561, type: 3}
   minAngle: 0
   maxAngle: -180
-  intervel: 1
+  intervel: 2
   isShooting: 1
 --- !u!50 &1644182225
 Rigidbody2D:

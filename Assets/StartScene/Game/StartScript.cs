@@ -10,6 +10,10 @@ public class StartScript : MonoBehaviour
 
     [SerializeField] float delayTime = 3.0f;
 
+    private float tyPanelCloseDelayTime = 6.0f;
+
+    [SerializeField] GameObject tyPanel;
+
     AudioSource audioSource;
 
     private void Start()
@@ -35,7 +39,14 @@ public class StartScript : MonoBehaviour
 
             startPanel.SetActive(false);
 
-            SceneManager.LoadScene("Stage2Scene");
+            StartCoroutine(ClosetyPanel());
+
+            SceneManager.LoadScene("Stage1Level1Scene");
         }
+    }
+
+    private IEnumerator ClosetyPanel()
+    {
+        yield return new WaitForSeconds(tyPanelCloseDelayTime);
     }
 }
