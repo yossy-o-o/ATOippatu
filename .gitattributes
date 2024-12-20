@@ -1,2 +1,4 @@
 assets/font/rounded-mplus-2c-medium-sdf.asset filter=lfs diff=lfs merge=lfs -text
 *.pack filter=lfs diff=lfs merge=lfs -text
+Assets/SE/Stage1/FireBlazeLarge_S08FI.4.wav filter=lfs diff=lfs merge=lfs -text
+Assets/SE/Stage4/WindGusts_BW.59814.wav filter=lfs diff=lfs merge=lfs -text
