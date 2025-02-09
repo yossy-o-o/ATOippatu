@@ -1,4 +1,4 @@
-# 1週間でゲーム開発1本目
+# あと一発（ATOippatu）
 
 ## ゲームプレイができるサイト
 - - **itch.io:** [リンクはこちら](https://yotya.itch.io/atoippatu)
