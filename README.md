@@ -1,6 +1,11 @@
 # あと一発（ATOippatu）
 
-![ゲーム画面1](images/scene1.png)
+![ゲーム画面1](atoippatu1.png)
+![ゲーム画面1](atoippatu2.png)
+![ゲーム画面1](atoippatu3.png)
+![ゲーム画面1](atoippatu4.png)
+![ゲーム画面1](atoippatu5.png)
+![ゲーム画面1](atoippatu6.png)
 
 ## ゲームプレイができるサイト
 - - **itch.io:** [リンクはこちら](https://yotya.itch.io/atoippatu)
