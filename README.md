@@ -1,5 +1,7 @@
 # あと一発（ATOippatu）
 
+![ゲーム画面1](images/scene1.png)
+
 ## ゲームプレイができるサイト
 - - **itch.io:** [リンクはこちら](https://yotya.itch.io/atoippatu)
  
